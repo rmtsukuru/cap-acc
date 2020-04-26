@@ -1,0 +1,19 @@
+#main-content {
+    padding: 10px;
+}
+
+#main-content > .col {
+    width: 300px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 15px;
+}
+
+#main-content > .col > .section {
+    margin-bottom: 15px;
+}
+
+#main-content > .col > .section > h2 {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
