@@ -27,6 +27,7 @@ function setupGame() {
         prices: {
             silicon: SILICON_PRICE,
         },
+        maxCustomers: CUSTOMER_MAX,
     };
 }
 
@@ -47,7 +48,10 @@ function updatePlayer(dt) {
 }
 
 function updateSales(dt) {
-    if (Math.random() < CUSTOMER_RATE) {
+    if (
+        Math.random() < CUSTOMER_RATE &&
+        game.business.sales.customers < game.market.maxCustomers
+    ) {
         game.business.sales.customers++;
     }
 
