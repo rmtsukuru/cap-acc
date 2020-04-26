@@ -13,14 +13,21 @@ function setupGame() {
     game.business = {
         cash: 1000,
         inventory: {
+            silicon: 100,
             widgets: 10,
             widgetQuality: 1,
         },
         sales: {
             customers: 0,
             employees: 1,
+            widgetPrice: WIDGET_PRICE,
         },
-    }
+    };
+    game.market = {
+        prices: {
+            silicon: SILICON_PRICE,
+        },
+    };
 }
 
 function updatePlayer(dt) {
@@ -28,8 +35,12 @@ function updatePlayer(dt) {
         game.player.fatigue--;
     }
 
-    if (game.player.fatigue > 10) {
+    if (game.player.fatigue > 40) {
+        game.player.status = 'exhausted';
+    } else if (game.player.fatigue > 20) {
         game.player.status = 'fatigued';
+    } else if (game.player.fatigue > 10) {
+        game.player.status = 'stressed';
     } else {
         game.player.status = 'normal';
     }
@@ -48,7 +59,7 @@ function updateSales(dt) {
     ) {
         game.business.sales.customers--;
         game.business.inventory.widgets--;
-        game.business.cash += WIDGET_PRICE;
+        game.business.cash += game.business.sales.widgetPrice;
     }
 }
 
