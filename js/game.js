@@ -18,7 +18,7 @@ function setupGame() {
             widgetQuality: 1,
         },
         sales: {
-            customers: 0,
+            customers: [],
             employees: 1,
             widgetPrice: WIDGET_PRICE,
         },
@@ -27,6 +27,7 @@ function setupGame() {
         prices: {
             silicon: SILICON_PRICE,
         },
+        demand: CUSTOMER_RATE,
         maxCustomers: CUSTOMER_MAX,
     };
 }
@@ -49,22 +50,31 @@ function updatePlayer(dt) {
 
 function updateSales(dt) {
     if (
-        Math.random() < CUSTOMER_RATE &&
-        game.business.sales.customers < game.market.maxCustomers
+        Math.random() < game.market.demand &&
+        game.business.sales.customers.length < game.market.maxCustomers
     ) {
-        game.business.sales.customers++;
+        game.business.sales.customers.push(buildCustomer());
     }
 
     if (
-        game.business.sales.customers > 0 &&
+        game.business.sales.customers.length > 0 &&
         game.business.sales.employees > 0 &&
         game.business.inventory.widgets > 0 &&
         Math.random() < SALE_RATE * game.business.sales.employees
     ) {
-        game.business.sales.customers--;
-        game.business.inventory.widgets--;
-        game.business.cash += game.business.sales.widgetPrice;
+        const customer = game.business.sales.customers.shift();
+        if (customer.wants.widget) {
+            const quantity = customer.wants.widget;
+            game.business.inventory.widgets -= quantity;
+            game.business.cash += quantity * game.business.sales.widgetPrice;
+        }
     }
+    game.business.sales.customers.forEach((customer, i) => {
+        customer.removePatience(dt * PATIENCE_LOSS_RATE);
+        if (customer.patience <= 0) {
+            game.business.sales.customers.splice(i, 1);
+        }
+    });
 }
 
 function updateBusiness(dt) {
